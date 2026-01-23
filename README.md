@@ -36,7 +36,7 @@ Once the challenge is complete, please push the code up to a new private repo an
 
 ## Submission
 
-***Then fill in this [form](https://forms.office.com/r/PjMPpEUvqt) with a link to your private repo and your email.***
+***Then fill in this [form](https://forms.cloud.microsoft/r/82xEn4LuNt) with a link to your private repo and your email.***
 
 ## Requirements
 
