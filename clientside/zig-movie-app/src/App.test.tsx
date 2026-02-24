@@ -1,15 +1,25 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React, { act } from 'react';
+import { createRoot } from 'react-dom/client';
 import App from './App';
 
-it('renders without crashing', () => {
+// Tell React 18 tests that this environment supports `act`
+(globalThis as any).IS_REACT_ACT_ENVIRONMENT = true;
+
+it('renders without crashing', async () => {
   (global as any).fetch = jest.fn().mockResolvedValue({
     ok: true,
     json: async () => [],
   });
 
   const div = document.createElement('div');
-  ReactDOM.render(<App />, div);
+  const root = createRoot(div);
+
+  await act(async () => {
+    root.render(<App />);
+  });
+
   expect(div.textContent).toContain('Popular Movies');
-  ReactDOM.unmountComponentAtNode(div);
+  await act(async () => {
+    root.unmount();
+  });
 });
