@@ -1,3 +1,57 @@
+## Movie App – Implemented Solution
+
+This repository now contains a completed implementation of the movie challenge: a .NET 8 Web API (C#) that proxies TMDb and a React 18 + TypeScript client that shows a popular‑movies homepage, search, and a movie detail page. The sections below describe how to run it, which requirements were met, and key design considerations, followed by the original challenge brief.
+
+### How to run
+
+- **Backend (serverside)**
+  - Prerequisites: .NET SDK 8.0+, TMDb API key (v3 auth).
+  - Commands:
+    ```bash
+    cd serverside
+    dotnet restore
+    export API_KEY=your_tmdb_v3_api_key_here
+    dotnet run
+    ```
+  - Runs on `http://localhost:5000` in Development with CORS enabled for all origins.
+
+- **Frontend (clientside/zig-movie-app)**
+  - Prerequisites: Node.js (LTS) and npm.
+  - Commands:
+    ```bash
+    cd clientside/zig-movie-app
+    npm install
+    npm start
+    ```
+  - Open `http://localhost:3000` in the browser.
+  - The app calls the backend at `http://localhost:5000/api/...` for all movie data.
+
+### Requirements coverage
+
+- **Popular movies homepage**: `HomePage` calls `GET /api/popular` and renders the top 20 movies from TMDb.
+- **Search by title**: search bar on `HomePage` calls `GET /api/search?query={term}` and shows matching movies.
+- **Movie detail links**: each movie in the lists links to `/movie/{id}`, which loads details via `GET /api/movie/{id}`.
+- **Detail page content**: `MovieDetailPage` shows the poster image, the title (linking to the movie’s official `homepage` when provided by TMDb), and a short description (`overview`).
+- **Server-side Web API only**: the React client never calls TMDb directly; it only uses the ASP.NET Core Web API.
+- **API routes**:
+  - `GET /api/popular`
+  - `GET /api/search?query={term}`
+  - `GET /api/movie/{id}`
+- **Unit tests**:
+  - `serverside.Tests` includes xUnit tests for `MoviesController` and `MovieRepository` using simple fakes of dependencies.
+  - `clientside/zig-movie-app/src/App.test.tsx` is a smoke test that mocks `fetch` and asserts the main UI renders.
+- **Client TypeScript**: all React components are written in TypeScript with React 18 (`React.FC`, typed props, shared `Movie` type).
+
+### Design considerations
+
+- **Modern .NET**: Upgraded the server to **.NET 8**, using endpoint routing, dependency injection, and `AddControllers().AddNewtonsoftJson()` to keep Newtonsoft-based models.
+- **Singleton HttpClient**: `MovieApiClient` uses a static `HttpClient` instance (singleton pattern) to avoid socket exhaustion and satisfy the bonus requirement.
+- **Repository pattern**: `MovieRepository` abstracts the TMDb client behind `IMovieRepository`, aligning with the provided DAL/repository guidance.
+- **Dependency Injection**: Controllers depend on interfaces (`IMovieRepository`, `IMovieApiClient`), registered in `Startup` as `Scoped` and `Singleton` respectively.
+- **CORS & local dev**: CORS policy `AllowClient` enables any origin/headers/methods, and HTTPS redirection is disabled in Development so `http://localhost:3000` → `http://localhost:5000` works cleanly.
+- **React 18 + routing**: Client uses React 18’s `createRoot` API, `react-router-dom` v5 for routing, and Bootstrap 5 for simple responsive styling.
+- **Testing strategy**: Server tests use lightweight in-memory fakes instead of external mocking libraries; client test keeps to a minimal smoke test to validate the main flow without overcoupling to UI details.
+
 # Interview Coding Challenge
 
 Step 1 of the Interview process. Follow the instructions below to complete this portion of the interview. 
